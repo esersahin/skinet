@@ -37,7 +37,10 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseDeveloperExceptionPage();
 }
+
+app.UseStatusCodePagesWithReExecute("/errors/{0}");
 
 app.UseStaticFiles();
 
