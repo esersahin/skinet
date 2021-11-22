@@ -6,6 +6,7 @@ using Infrastructure.Data;
 using Core.Interfaces;
 using Microsoft.Data.Sqlite;
 using API.Helpers;
+using API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,12 +33,14 @@ var app = builder.Build();
 
 await EnsureDb(app.Services, app.Logger);
 
+app.UseMiddleware<ExceptionMiddleware>();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    app.UseDeveloperExceptionPage();
+    //app.UseDeveloperExceptionPage();
 }
 
 app.UseStatusCodePagesWithReExecute("/errors/{0}");
