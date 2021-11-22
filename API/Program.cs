@@ -7,6 +7,8 @@ using Core.Interfaces;
 using Microsoft.Data.Sqlite;
 using API.Helpers;
 using API.Middleware;
+using Microsoft.AspNetCore.Mvc;
+using API.Controllers.Errors;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +22,24 @@ builder.Services.AddControllers();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<StoreContext>(x => x.UseSqlite(connectionString));
+
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.InvalidModelStateResponseFactory = actionContext =>
+    {
+        var errors = actionContext.ModelState
+        .Where(e => e.Value.Errors.Count > 0)
+        .SelectMany(e => e.Value.Errors)
+        .Select(e => e.ErrorMessage).ToArray();
+
+        var errorResponse = new ApiValidationErrorResponse
+        {
+            ErrorMessages = errors
+        };
+
+        return new BadRequestObjectResult(errorResponse);
+    };
+});
 
 //builder.Services.AddScoped( _ => new SqliteConnection(connectionString));
 
