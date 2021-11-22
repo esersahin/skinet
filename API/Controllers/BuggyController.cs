@@ -1,3 +1,5 @@
+using System.Net;
+using API.Controllers.Errors;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,8 +18,9 @@ namespace API.Controllers
         {
             var thing = _context.Products.Find(42);
 
-            if(thing == null){
-                return NotFound();
+            if(thing == null)
+            {
+                return NotFound(new ApiResponse(HttpStatusCode.NotFound));
             }
 
             return Ok();
